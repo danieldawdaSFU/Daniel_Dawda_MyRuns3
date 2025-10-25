@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">Daniel_Dawda_MyRuns2</string>
+    <string name="account_preferences">Account Preferences</string>
+    <string name="user_profile">User Profile</string>
+    <string name="profile_desc">Name, Email, Class, etc</string>
+    <string name="privacy_settings">Privacy Settings</string>
+    <string name="posting_records">Posting your records anonymously</string>
+    <string name="unit_preferences">Unit Preferences</string>
+    <string name="select_prefered_units">Select preferred units</string>
+    <string name="comment">Comment</string>
+    <string name="any_suggestions_or_comments">Any suggestions or comments</string>
+    <string name="name">Name:</string>
+    <string name="name_here">Your name here</string>
+    <string name="email">Email:</string>
+    <string name="email_here">Your Email here</string>
+    <string name="phone">Phone:</string>
+    <string name="phone_here">Your phone number here</string>
+    <string name="gender">Gender:</string>
+    <string name="female">Female</string>
+    <string name="male">Male</string>
+    <string name="other">Other</string>
+    <string name="class_str">Class:</string>
+    <string name="class_eg">e.g 2012</string>
+    <string name="major">Major:</string>
+    <string name="major_here">Your major here</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="take_photo">Change</string>
+    <string name="imperial">Imperial (eg. miles)</string>
+    <string name="your_comment_goes_here">Your comment goes here...</string>
+    <string name="input_type">Input Type:</string>
+    <string name="activity_type">Activity Type:</string>
+    <string name="start">Start</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="duration">Duration</string>
+    <string name="distance">Distance</string>
+    <string name="calories">Calories</string>
+    <string name="heart_rate">Heart Rate</string>
+    <string name="gps_activity">GPS Activity</string>
+    <string name="automatic">Automatic</string>
+    <string name="history_fragment">History Fragment</string>
+    <string-array name="input_options">
+        <item>GPS</item>
+        <item>Manual Input</item>
+        <item>Automatic</item>
+    </string-array>
+    <string-array name="activity_options">
+        <item>Run</item>
+        <item>Walk</item>
+        <item>Cycling</item>
+        <item>Hike</item>
+        <item>Swim</item>
+        <item>Row</item>
+        <item>Other</item>
+    </string-array>
+</resources>

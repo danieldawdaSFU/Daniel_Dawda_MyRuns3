@@ -1,0 +1,297 @@
+package com.example.daniel_dawda_myruns3
+
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Base64
+import android.util.Log
+import android.widget.Button
+import android.widget.EditText
+import android.widget.RadioGroup
+import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.ViewModelProvider
+import java.io.ByteArrayOutputStream
+import java.io.File
+
+class ProfileActivity : AppCompatActivity(), ProfileDialogs.PhotoPickerCallback {
+
+    // keys for SharedPreferences
+    val userPreferencesKey = "userPreferences"
+    val nameKey = "name"
+    val emailKey = "email"
+    val phoneKey = "phone"
+    val genderKey = "gender"
+    val classKey = "class"
+    val majorKey = "major"
+    val photoKey = "photo"
+
+    var name: String? = null
+    var email: String? = null
+    var phone: String? = null
+    var gender: Int? = 2
+    var classNum: Int? = 0
+    var major: String? = null
+    var photoPrefString: String? = null
+
+    lateinit var imageView: ImageView
+    lateinit var button: Button
+    lateinit var nameText: EditText
+    lateinit var emailText: EditText
+    lateinit var phoneText: EditText
+    lateinit var classText: EditText
+    lateinit var majorText: EditText
+    lateinit var cameraLauncher: ActivityResultLauncher<Intent>
+    lateinit var galleryLauncher: ActivityResultLauncher<Intent>
+    lateinit var tempUri: Uri
+    lateinit var radioGroup: RadioGroup
+    val tempImgFileName = "myruns_photo.jpg"
+
+    private lateinit var profileViewModel: ProfileViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContentView(R.layout.activity_profile)
+
+        profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+
+        imageView = findViewById(R.id.photo)
+        button = findViewById(R.id.camera_btn)
+        radioGroup = findViewById(R.id.radioGroup)
+        nameText = findViewById(R.id.name_here)
+        emailText = findViewById(R.id.email_here)
+        phoneText = findViewById(R.id.phone_here)
+        classText = findViewById(R.id.class_eg)
+        majorText = findViewById(R.id.major_here)
+
+        // Camera launcher
+        cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val bitmap = Util.getBitmap(this, tempUri)
+                profileViewModel.setImage(bitmap)
+                imageView.setImageBitmap(bitmap)
+            }
+        }
+
+        // Gallery launcher
+        galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val selectedImage: Uri? = result.data?.data
+                selectedImage?.let {
+                    val bitmap = Util.getBitmap(this, it)
+                    profileViewModel.setImage(bitmap)
+                    imageView.setImageBitmap(bitmap)
+                }
+            }
+        }
+
+        // GPT generated
+        profileViewModel.bitmap.observe(this) { bmp ->
+            bmp?.let { imageView.setImageBitmap(it) }
+        }
+
+        loadProfile()
+        handleCameraButton()
+
+        // default gender is Other
+        var gender = "Other"
+        var genderNumIn = 2
+        // adapted from https://www.geeksforgeeks.org/android/radiogroup-in-android/
+        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+
+            val radioButton = findViewById<RadioButton>(checkedId)
+            gender = radioButton.text as String
+
+            if (gender == "Female")
+                genderNumIn = 0
+            if (gender == "Male")
+                genderNumIn = 1
+            if (gender == "Other")
+                genderNumIn = 2
+        }
+
+        val tag = "YIPPY"
+        val saveButton: Button = findViewById(R.id.save)
+        // successful save criteria:
+        // - Entries are not empty
+        // - String entries are not more than 64 character long
+        // - Photo is selected
+        // - Phone and class are numerical
+        // - Phone number is 10 characters long
+        // if any of these criteria are not met when save is pressed,
+        // the information will not save and the user will receive a
+        // dialog box notifying them of the criteria
+        saveButton.setOnClickListener {
+            var failed = false
+
+            // this one line generated by Gemini
+            if (imageView.getDrawable() == null)
+                failed = true
+
+            val nameIn: String = nameText.text.toString()
+            if (nameIn.length > 64 || nameIn.isEmpty())
+                failed = true
+
+            val emailIn: String = emailText.text.toString()
+            if (emailIn.length > 64 || emailIn.isEmpty())
+                failed = true
+
+            val phoneIn: String = phoneText.text.toString()
+            try {
+                phoneIn.toInt()
+            } catch (e: NumberFormatException) {
+                failed = true
+            }
+
+            if (phoneIn.length != 10)
+                failed = true
+
+            val classNumStr: String = classText.text.toString()
+            if (classNumStr.isEmpty())
+                failed = true
+
+            var classNumIn = 0
+            try {
+                classNumIn = classNumStr.toInt()
+            } catch (e: NumberFormatException) {
+                failed = true
+            }
+
+            val majorIn: String = majorText.text.toString()
+
+            if (majorIn.length > 64 || majorIn.isEmpty())
+                failed = true
+
+            if (!failed) {
+                Log.d(tag, nameIn)
+                Log.d(tag, emailIn)
+                Log.d(tag, phoneIn)
+                Log.d("RADIO", gender)
+                Log.d(tag, majorIn)
+
+                // save the profile
+                saveProfile(nameIn, emailIn, phoneIn, genderNumIn, classNumIn, majorIn)
+
+                finish()
+            }
+            if (failed) {
+                val myDialog = ProfileDialogs()
+                val bundle = Bundle()
+                bundle.putInt(ProfileDialogs.DIALOG_KEY, ProfileDialogs.SAVE_FAILED_DIALOG)
+                myDialog.arguments = bundle
+                myDialog.show(supportFragmentManager, "profile dialog")
+            }
+        }
+
+        val cancelButton: Button = findViewById(R.id.cancel)
+        cancelButton.setOnClickListener {
+            finish()
+        }
+    }
+
+    fun saveProfile(n: String, em: String, ph: String, gen: Int, cla: Int, maj: String) {
+        val sharedPreferences = getSharedPreferences(userPreferencesKey, MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        editor.putString(nameKey, n)
+        editor.putString(emailKey, em)
+        editor.putString(phoneKey, ph)
+        editor.putInt(genderKey, gen)
+        editor.putInt(classKey, cla)
+        editor.putString(majorKey, maj)
+
+        // for saving photo
+        // adapted from https://stackoverflow.com/questions/48437564/how-can-i-convert-bitmap-to-string-string-to-bitmap-in-kotlin
+        val strm = ByteArrayOutputStream()
+        val bitmap: Bitmap = imageView.drawable.toBitmap()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, strm)
+        val b = strm.toByteArray()
+        val photoString: String = Base64.encodeToString(b, Base64.DEFAULT)
+        editor.putString(photoKey, photoString)
+
+        editor.apply()
+        Toast.makeText(applicationContext, "Profile Saved!", Toast.LENGTH_LONG).show()
+    }
+
+    fun loadProfile() {
+        val sharedPreferences = getSharedPreferences(userPreferencesKey, MODE_PRIVATE)
+        name = sharedPreferences.getString(nameKey, null)
+        email = sharedPreferences.getString(emailKey, null)
+        phone = sharedPreferences.getString(phoneKey, null)
+        gender = sharedPreferences.getInt(genderKey, 2)
+        classNum = sharedPreferences.getInt(classKey, 0)
+        major = sharedPreferences.getString(majorKey, null)
+        photoPrefString = sharedPreferences.getString(photoKey, null)
+
+        if (name != null)
+            nameText.setText(name)
+        if (email != null)
+            emailText.setText(email)
+        if (phone != null)
+            phoneText.setText(phone)
+        if (classNum != 0)
+            classText.setText(classNum.toString())
+        if (major != null)
+            majorText.setText(major)
+
+        // for gender
+        when (gender) {
+            0 -> radioGroup.check(R.id.female)
+            1 -> radioGroup.check(R.id.male)
+            2 -> radioGroup.check(R.id.other)
+        }
+
+        // for photo
+        // adapted from https://stackoverflow.com/questions/45733975/string-to-bitmap-in-kotlin
+        if (photoPrefString != null) {
+            val imageBytes = Base64.decode(photoPrefString, 0)
+            val image = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            imageView.setImageBitmap(image)
+        }
+
+    }
+
+    // GPT generated
+    override fun pickPhotoFromCamera() {
+        tempUri = createTempUri() // same as before
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri)
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        cameraLauncher.launch(intent)
+    }
+
+    override fun pickPhotoFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        galleryLauncher.launch(intent)
+    }
+
+    fun handleCameraButton() {
+        button.setOnClickListener() {
+            val myDialog = ProfileDialogs()
+            val bundle = Bundle()
+            bundle.putInt(ProfileDialogs.DIALOG_KEY, ProfileDialogs.CAMERA_DIALOG)
+            myDialog.arguments = bundle
+            myDialog.show(supportFragmentManager, "profile dialog")
+        }
+    }
+
+    fun createTempUri(): Uri {
+        val tempFile = File(getExternalFilesDir(null), tempImgFileName)
+        return FileProvider.getUriForFile(
+            this,
+            "com.daniel.myruns2camera",
+            tempFile
+        )
+    }
+}
