@@ -29,13 +29,6 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
         const val COMM_DIALOG = 5
     }
 
-    val manualPreferences = "manualPrefs"
-    val durKey = "duration"
-    val distKey = "distance"
-    val calKey = "calories"
-    val hrKey = "heartRate"
-    val commKey = "comments"
-
     lateinit var input: EditText
     lateinit var sharedPreferences: SharedPreferences
     private var dialogId: Int? = null
@@ -52,14 +45,14 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
 
         input = view.findViewById(R.id.manual_input)
 
-        sharedPreferences = requireContext().getSharedPreferences(manualPreferences, MODE_PRIVATE)
+        sharedPreferences = requireContext().getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
         when (dialogId) {
             DUR_DIALOG -> {
 
                 input.inputType = InputType.TYPE_CLASS_NUMBER
 
                 // retrieve duration preference
-                val dur: Double = Util.getDouble(durKey, sharedPreferences)
+                val dur: Double = Util.getDouble(Util.durKey, sharedPreferences)
                 if (dur != 0.0) {
                     input.setText(dur.toString())
                 }
@@ -84,7 +77,7 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
                 unitChecked = settingsPreferences.getInt(unitKey, 0)
 
                 // retrieve distance preference
-                val dist: Double = Util.getDouble(distKey, sharedPreferences)
+                val dist: Double = Util.getDouble(Util.distKey, sharedPreferences)
 
                 if (dist != 0.0) {
                     input.setText(dist.toString())
@@ -107,7 +100,7 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
             CAL_DIALOG -> {
 
                 // retrieve calorie
-                val cals: Double = Util.getDouble(calKey, sharedPreferences)
+                val cals: Double = Util.getDouble(Util.calKey, sharedPreferences)
 
                 if (cals != 0.0) {
                     input.setText(cals.toString())
@@ -124,7 +117,7 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
             }
             HR_DIALOG -> {
                 // retrieve heart rate
-                val hr: Double = Util.getDouble(hrKey, sharedPreferences)
+                val hr: Double = Util.getDouble(Util.hrKey, sharedPreferences)
 
                 if (hr != 0.0) {
                     input.setText(hr.toString())
@@ -141,7 +134,7 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
             }
             COMM_DIALOG -> {
                 // retrieve comment
-                val comment: String = sharedPreferences.getString(commKey, "").toString()
+                val comment: String = sharedPreferences.getString(Util.commKey, "").toString()
 
                 if (comment != "") {
                     input.setText(comment)
@@ -165,27 +158,27 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
             // save inputs
             DUR_DIALOG -> {
                 if (inputStr != "") {
-                    Util.putDouble(durKey, input.text.toString().toDouble(), sharedPreferences)
+                    Util.putDouble(Util.durKey, input.text.toString().toDouble(), sharedPreferences)
                 }
             }
             DIST_DIALOG -> {
                 if (inputStr != "") {
-                    Util.putDouble(distKey, input.text.toString().toDouble(), sharedPreferences)
+                    Util.putDouble(Util.distKey, input.text.toString().toDouble(), sharedPreferences)
                 }
             }
             CAL_DIALOG -> {
                 if (inputStr != "") {
-                    Util.putDouble(calKey, input.text.toString().toDouble(), sharedPreferences)
+                    Util.putDouble(Util.calKey, input.text.toString().toDouble(), sharedPreferences)
                 }
             }
             HR_DIALOG -> {
                 if (inputStr != "") {
-                    Util.putDouble(hrKey, input.text.toString().toDouble(), sharedPreferences)
+                    Util.putDouble(Util.hrKey, input.text.toString().toDouble(), sharedPreferences)
                 }
             }
             COMM_DIALOG -> {
                 val editor = sharedPreferences.edit()
-                editor.putString(commKey, input.text.toString())
+                editor.putString(Util.commKey, input.text.toString())
                 editor.apply()
             }
         }
@@ -205,15 +198,12 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
 // adapted from Android Studio docs
 class TimePickerFragment: DialogFragment(), TimePickerDialog.OnTimeSetListener  {
 
-    val manualPreferences = "manualPrefs"
-    val timeKey = "time"
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         // load time from preferences or use current time
-        val sharedPreferences = requireContext().getSharedPreferences(manualPreferences, MODE_PRIVATE)
+        val sharedPreferences = requireContext().getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
 
-        val time = sharedPreferences.getLong(timeKey, 0L)
+        val time = sharedPreferences.getLong(Util.timeKey, 0L)
         val hour: Int
         val minute: Int
         if (time != 0L) {
@@ -229,10 +219,10 @@ class TimePickerFragment: DialogFragment(), TimePickerDialog.OnTimeSetListener  
 
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
         // save time
-        val sharedPreferences = requireContext().getSharedPreferences(manualPreferences, MODE_PRIVATE)
+        val sharedPreferences = requireContext().getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
 
         val editor = sharedPreferences.edit()
-        editor?.putLong(timeKey, (hourOfDay * 100 + minute).toLong())
+        editor?.putLong(Util.timeKey, (hourOfDay * 100 + minute).toLong())
         editor?.apply()
 
         Toast.makeText(activity, "Time: $hourOfDay:$minute", Toast.LENGTH_LONG).show()
@@ -243,13 +233,10 @@ class TimePickerFragment: DialogFragment(), TimePickerDialog.OnTimeSetListener  
 // adapted from Android Studio docs
 class DatePickerFragment: DialogFragment(), DatePickerDialog.OnDateSetListener  {
 
-    val manualPreferences = "manualPrefs"
-    val dateKey = "date"
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // load date from preferences or use current date
-        val sharedPreferences = requireContext().getSharedPreferences(manualPreferences, MODE_PRIVATE)
-        val date = sharedPreferences.getLong(dateKey, 0L)
+        val sharedPreferences = requireContext().getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
+        val date = sharedPreferences.getLong(Util.dateKey, 0L)
         val year: Int
         val month: Int
         val day: Int
@@ -268,9 +255,9 @@ class DatePickerFragment: DialogFragment(), DatePickerDialog.OnDateSetListener  
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         // save time
-        val sharedPreferences = requireContext().getSharedPreferences(manualPreferences, MODE_PRIVATE)
+        val sharedPreferences = requireContext().getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        editor?.putLong(dateKey, ((year * 10000) + (month * 100) + dayOfMonth).toLong())
+        editor?.putLong(Util.dateKey, ((year * 10000) + (month * 100) + dayOfMonth).toLong())
         editor?.apply()
         Toast.makeText(activity, "Date: $month/$dayOfMonth/$year", Toast.LENGTH_LONG).show()
     }

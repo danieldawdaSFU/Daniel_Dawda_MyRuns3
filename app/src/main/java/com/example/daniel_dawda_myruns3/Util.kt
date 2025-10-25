@@ -15,6 +15,16 @@ import androidx.core.content.ContextCompat
 
 // DEMO from CMPT 362 lecture
 object Util {
+
+    val manualPreferences = "manualPrefs"
+    val durKey = "duration"
+    val distKey = "distance"
+    val calKey = "calories"
+    val hrKey = "heartRate"
+    val commKey = "comments"
+    val dateKey = "date"
+    val timeKey = "time"
+
     fun checkPermissions(activity: Activity?) {
         if (Build.VERSION.SDK_INT < 23) return
 

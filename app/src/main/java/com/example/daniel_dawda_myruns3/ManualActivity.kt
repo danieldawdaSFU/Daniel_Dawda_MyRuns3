@@ -8,14 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.daniel_dawda_myruns3.database.Activity
 
 class ManualActivity: AppCompatActivity() {
-    val manualPreferences = "manualPrefs"
-    val durKey = "duration"
-    val distKey = "distance"
-    val calKey = "calories"
-    val hrKey = "heartRate"
-    val commKey = "comments"
-    val dateKey = "date"
-    val timeKey = "time"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,12 +74,14 @@ class ManualActivity: AppCompatActivity() {
             // TODO: implement start button and save preferences in database
 
             // open preferences
-            val prefs = getSharedPreferences(manualPreferences, MODE_PRIVATE)
+            val prefs = getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
 
             var activityInfo = Activity()
             activityInfo.activityType = 0
-            activityInfo.duration = Util.getDouble(durKey, prefs)
-            activityInfo.distance = Util.getDouble(distKey, prefs)
+            activityInfo.duration = Util.getDouble(Util.durKey, prefs)
+            activityInfo.distance = Util.getDouble(Util.distKey, prefs)
+            activityInfo.duration = Util.getDouble(Util.durKey, prefs)
+            activityInfo.distance = Util.getDouble(Util.distKey, prefs)
 
 
 
@@ -97,7 +91,7 @@ class ManualActivity: AppCompatActivity() {
         val cancelButton = findViewById<Button>(R.id.cancel_manual)
         cancelButton.setOnClickListener {
             Toast.makeText(this, "Cancel button clicked", Toast.LENGTH_LONG).show()
-            val prefs = getSharedPreferences(manualPreferences, MODE_PRIVATE)
+            val prefs = getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
             prefs.edit().clear().apply()
             finish()
             // TODO: implement cancel button
