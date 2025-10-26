@@ -1,10 +1,6 @@
 package com.example.daniel_dawda_myruns3.database
 
-import android.app.Application
 import androidx.lifecycle.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
@@ -12,11 +8,11 @@ import java.lang.IllegalArgumentException
 // adapted from RoomDatabase demo
 class ActivityViewModel(private val repository: ActivityRepository) : ViewModel() {
 
-    val allActivitiesLiveData: LiveData<List<Activity>> = repository.allActivities.asLiveData()
+    val allActivitiesLiveData: LiveData<List<ActivityItem>> = repository.allActivities.asLiveData()
 
 
-    fun insert(Activity: Activity) {
-        viewModelScope.launch { repository.insert(Activity) }
+    fun insert(Activity: ActivityItem) {
+        repository.insert(Activity)
     }
 }
 

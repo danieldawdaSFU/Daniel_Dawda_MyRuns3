@@ -7,7 +7,7 @@ import java.util.Calendar
 
 // adapted from RoomDatabase demo
 @Entity(tableName = "activity_table")
-data class Activity (
+data class ActivityItem (
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
 

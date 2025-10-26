@@ -1,6 +1,5 @@
 package com.example.daniel_dawda_myruns3.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -11,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 interface ActivityDatabaseDao {
 
     @Insert
-    suspend fun insertActivity(activity: Activity)
+    suspend fun insertActivity(activity: ActivityItem)
 
     @Query("SELECT * FROM activity_table")
-    fun getAllActivities(): Flow<List<Activity>>
+    fun getAllActivities(): Flow<List<ActivityItem>>
 
     @Query("DELETE FROM activity_table")
     suspend fun deleteAll()

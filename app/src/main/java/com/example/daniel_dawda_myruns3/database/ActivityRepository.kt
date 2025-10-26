@@ -1,7 +1,5 @@
 package com.example.daniel_dawda_myruns3.database
 
-import androidx.annotation.WorkerThread
-import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
@@ -10,17 +8,23 @@ import kotlinx.coroutines.launch
 // adapted from RoomDatabase demo
 class ActivityRepository(private val activityDatabaseDao: ActivityDatabaseDao) {
 
-    val allActivities: Flow<List<Activity>> = activityDatabaseDao.getAllActivities()
+    val allActivities: Flow<List<ActivityItem>> = activityDatabaseDao.getAllActivities()
 
-    suspend fun insert(comment: Activity){
+    fun insert(comment: ActivityItem){
+        CoroutineScope(IO).launch {
             activityDatabaseDao.insertActivity(comment)
+        }
     }
 
-    suspend fun delete(id: Long){
+    fun delete(id: Long){
+        CoroutineScope(IO).launch {
             activityDatabaseDao.deleteActivity(id)
+        }
     }
 
-    suspend fun deleteAll(){
+    fun deleteAll(){
+        CoroutineScope(IO).launch {
             activityDatabaseDao.deleteAll()
+        }
     }
 }

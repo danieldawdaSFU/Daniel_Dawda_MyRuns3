@@ -8,9 +8,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.daniel_dawda_myruns3.Util.getViewModelFactory
-import com.example.daniel_dawda_myruns3.database.Activity
+import com.example.daniel_dawda_myruns3.database.ActivityItem
 import com.example.daniel_dawda_myruns3.database.ActivityViewModel
-import kotlinx.serialization.builtins.ArraySerializer
 import java.util.Calendar
 
 class ManualActivity: AppCompatActivity() {
@@ -82,7 +81,7 @@ class ManualActivity: AppCompatActivity() {
             // open preferences
             val prefs = getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
 
-            var activityInfo = Activity()
+            var activityInfo = ActivityItem()
             activityInfo.inputType = prefs.getInt(Util.inputKey, 0)
             activityInfo.activityType = prefs.getInt(Util.actKey, 0)
 

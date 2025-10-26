@@ -7,23 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.daniel_dawda_myruns3.ManualActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.daniel_dawda_myruns3.R
-import com.example.daniel_dawda_myruns3.Util
-import com.example.daniel_dawda_myruns3.database.Activity
+import com.example.daniel_dawda_myruns3.Util.getViewModelFactory
+import com.example.daniel_dawda_myruns3.database.ActivityItem
 import com.example.daniel_dawda_myruns3.database.ActivityViewModel
-import kotlin.text.replace
 
 // adapted from Actiontabs demo
 class HistoryFragment : Fragment() {
 
     // adapted from RoomDatabase demo
-    private lateinit var histList: ListView
-    private lateinit var arrayList: ArrayList<Activity>
-    private lateinit var arrayAdapter: ActivityAdapter
+    private lateinit var histrecycler: RecyclerView
     private lateinit var activityViewModel: ActivityViewModel
+    private lateinit var adapter: ActivityAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,19 +29,19 @@ class HistoryFragment : Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.history_fragment, container, false)
-        histList = view.findViewById(R.id.history_list)
+        histrecycler = view.findViewById(R.id.history_recycler)
 
-        arrayList = ArrayList()
-        arrayAdapter = ActivityAdapter(requireActivity(), arrayList)
-        histList.adapter = arrayAdapter
-
-        val viewModelFactory = ManualActivity
+        val viewModelFactory = getViewModelFactory(requireContext())
         activityViewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(ActivityViewModel::class.java)
+
+        // RecyclerView setup adapted from ChatGPT
+        adapter = ActivityAdapter(requireContext(), activityViewModel.allActivitiesLiveData.value ?: emptyList())
+        histrecycler.adapter = adapter
+        histrecycler.layoutManager = LinearLayoutManager(requireContext())
 
         activityViewModel.allActivitiesLiveData.observe(viewLifecycleOwner) { activities ->
             Log.d("HistoryFragment", "LiveData updated: ${activities.size}")
-            arrayAdapter.replace(activities)
-            arrayAdapter.notifyDataSetChanged()
+            adapter.replace(activities)
         }
 
         return view
