@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 // adapted from RoomDatabase demo
 class ActivityRepository(private val activityDatabaseDao: ActivityDatabaseDao) {
 
-    val allComments: Flow<List<Activity>> = activityDatabaseDao.getAllActivities()
+    val allActivities: Flow<List<Activity>> = activityDatabaseDao.getAllActivities()
 
     fun insert(comment: Activity){
         CoroutineScope(IO).launch{

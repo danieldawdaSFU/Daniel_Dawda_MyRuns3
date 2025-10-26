@@ -1,5 +1,6 @@
 package com.example.daniel_dawda_myruns3
 
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,7 +20,7 @@ class StartFragment:  Fragment(), AdapterView.OnItemSelectedListener {
     lateinit var startButton: Button
     // 0 = GPS, 1 = Manual, 2 = Automatic
     var input_type: Int = 0
-    // 0 = Running, 1 = Walking
+    // 0 = Running, 1 = Walking, etc
     var activity_type: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +39,14 @@ class StartFragment:  Fragment(), AdapterView.OnItemSelectedListener {
 
         startButton.setOnClickListener {
             val intent: Intent
+
+            // save activity type and input type to shared preferences
+            val sharedPreferences = requireContext().getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putInt(Util.actKey, activity_type)
+            editor.putInt(Util.inputKey, input_type)
+            editor.apply()
+
             when (input_type) {
                 0 -> {
                     intent = Intent(requireContext(), GPSActivity::class.java)

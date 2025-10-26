@@ -207,8 +207,9 @@ class TimePickerFragment: DialogFragment(), TimePickerDialog.OnTimeSetListener  
         val hour: Int
         val minute: Int
         if (time != 0L) {
-            hour = (time / 100).toInt()
-            minute = (time % 100).toInt()
+            val (h, m) = Util.parseTime(time)
+            hour = h
+            minute = m
         } else {
             val c = Calendar.getInstance()
             hour = c.get(Calendar.HOUR_OF_DAY)
@@ -241,9 +242,10 @@ class DatePickerFragment: DialogFragment(), DatePickerDialog.OnDateSetListener  
         val month: Int
         val day: Int
         if (date != 0L) {
-            year = (date / 10000).toInt()
-            month = ((date % 10000) / 100).toInt()
-            day = (date % 100).toInt()
+            val (y, m, d) = Util.parseDate(date)
+            year = y
+            month = m
+            day = d
         } else {
             val calendar = Calendar.getInstance()
             year = calendar.get(Calendar.YEAR)

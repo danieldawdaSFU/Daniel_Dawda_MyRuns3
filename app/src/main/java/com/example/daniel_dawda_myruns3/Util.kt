@@ -17,6 +17,8 @@ import androidx.core.content.ContextCompat
 object Util {
 
     val manualPreferences = "manualPrefs"
+    val inputKey = "input"
+    val actKey = "activity"
     val durKey = "duration"
     val distKey = "distance"
     val calKey = "calories"
@@ -64,4 +66,20 @@ object Util {
             )
         )
     }
+
+    fun parseDate(date: Long): Triple<Int, Int, Int> {
+        val year = (date / 10000).toInt()
+        val month = ((date % 10000) / 100).toInt()
+        val day = (date % 100).toInt()
+
+        return Triple(year, month, day)
+    }
+
+    fun parseTime(time: Long): Pair<Int, Int> {
+        val hour = (time / 100).toInt()
+        val minute = (time % 100).toInt()
+
+        return Pair(hour, minute)
+    }
 }
+

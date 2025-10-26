@@ -6,6 +6,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.daniel_dawda_myruns3.database.Activity
+import kotlinx.serialization.builtins.ArraySerializer
+import java.util.Calendar
 
 class ManualActivity: AppCompatActivity() {
 
@@ -70,22 +72,34 @@ class ManualActivity: AppCompatActivity() {
 
         val startButton = findViewById<Button>(R.id.start_manual)
         startButton.setOnClickListener {
-            Toast.makeText(this, "Activity Saved", Toast.LENGTH_LONG).show()
-            // TODO: implement start button and save preferences in database
 
             // open preferences
             val prefs = getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
 
             var activityInfo = Activity()
-            activityInfo.activityType = 0
+            activityInfo.inputType = prefs.getInt(Util.inputKey, 0)
+            activityInfo.activityType = prefs.getInt(Util.actKey, 0)
+
+            // turn date long into Calendar object
+            val date = prefs.getLong(Util.dateKey, 0L)
+            val (year, month, day) = Util.parseDate(date)
+            val time = prefs.getLong(Util.timeKey, 0L)
+            val (hour, minute) = Util.parseTime(time)
+            val calendar = Calendar.getInstance()
+            calendar.set(year, month, day, hour, minute)
+            activityInfo.dateTime = calendar
+
             activityInfo.duration = Util.getDouble(Util.durKey, prefs)
             activityInfo.distance = Util.getDouble(Util.distKey, prefs)
-            activityInfo.duration = Util.getDouble(Util.durKey, prefs)
-            activityInfo.distance = Util.getDouble(Util.distKey, prefs)
-
-
-
-
+            activityInfo.avgPace = 0.0
+            activityInfo.avgSpeed = 0.0
+            activityInfo.calorie = Util.getDouble(Util.calKey, prefs)
+            activityInfo.climb = 0.0
+            activityInfo.heartRate = Util.getDouble(Util.hrKey, prefs)
+            activityInfo.comment = prefs.getString(Util.commKey, "").toString()
+            activityInfo.locationList = ArrayList()
+            Toast.makeText(this, "Activity Saved", Toast.LENGTH_LONG).show()
+            finish()
         }
 
         val cancelButton = findViewById<Button>(R.id.cancel_manual)

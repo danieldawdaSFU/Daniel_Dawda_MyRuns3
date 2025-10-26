@@ -12,13 +12,13 @@ data class Activity (
     var id: Long = 0L,
 
     @ColumnInfo(name = "input_column")
-    var input: Int = 0,
+    var inputType: Int = 0,
 
     @ColumnInfo(name = "activity_type_column")
     var activityType: Int = 0,
 
     @ColumnInfo(name = "dateTime_column")
-    var date: Calendar = Calendar.getInstance(),
+    var dateTime: Calendar = Calendar.getInstance(),
 
     @ColumnInfo(name = "duration_column")
     var duration: Double = 0.0,
@@ -45,9 +45,9 @@ data class Activity (
     var comment: String = "",
 
     @ColumnInfo(name = "location_column")
-    var location: ArrayList<LatLng> = ArrayList()
+    var locationList: ArrayList <LatLng> = ArrayList()
 )
 
-class LatLng {
+class LatLng(val latitude: Double, val longitude: Double) {
     //TODO: DEFINE CLASS
 }
