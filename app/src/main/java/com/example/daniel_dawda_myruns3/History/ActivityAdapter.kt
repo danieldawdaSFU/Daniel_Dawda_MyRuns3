@@ -8,10 +8,13 @@ import android.widget.ArrayAdapter
 import android.widget.BaseAdapter
 import android.widget.TextView
 import com.example.daniel_dawda_myruns3.R
+import com.example.daniel_dawda_myruns3.Util
 import com.example.daniel_dawda_myruns3.database.Activity
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 // adapted from my stress meter app and RoomDatabase demo
-class ActivityAdapter(private val context: Context, private val list: List<Activity>): BaseAdapter(){
+class ActivityAdapter(private val context: Context, private var list: List<Activity>): BaseAdapter(){
 
     val inputMap: Map<Int, String> = mapOf(
         0 to "GPS",
@@ -55,16 +58,20 @@ class ActivityAdapter(private val context: Context, private val list: List<Activ
         val duration = list.get(position).duration
 
         // construct top and bottom text
-        val top_text = "${inputMap[inputType]} Entry: ${activityMap[activityType]}, ${dateTime.toString()}"
+        val top_text = "${inputMap[inputType]} Entry: ${activityMap[activityType]}, ${Util.calendarToString(dateTime)}"
 
         val minutes = duration.toInt() / 60
         val seconds = duration.toInt() % 60
-        val bottom_text = "${distance.toString()} Miles, ${minutes.toString()}mins ${seconds.toString()}secs"
+        val bottom_text = "${distance} Miles, ${minutes}mins ${seconds}secs"
 
         // set top and bottom texts
         indexView.text = top_text
         timeView.text = bottom_text
 
         return view
+    }
+
+    fun replace(newList: List<Activity>){
+        list = newList
     }
 }

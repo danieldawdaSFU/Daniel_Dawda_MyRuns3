@@ -7,12 +7,15 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.daniel_dawda_myruns3.Util.getViewModelFactory
 import com.example.daniel_dawda_myruns3.database.Activity
 import com.example.daniel_dawda_myruns3.database.ActivityViewModel
 import kotlinx.serialization.builtins.ArraySerializer
 import java.util.Calendar
 
 class ManualActivity: AppCompatActivity() {
+
+    private var activityViewModel : ActivityViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,11 +106,11 @@ class ManualActivity: AppCompatActivity() {
             activityInfo.locationList = ArrayList()
 
             // actually save into database
-            val viewModelFactory = Util.initDatabase(this)
-            val activityViewModel = ViewModelProvider(this, viewModelFactory).get(ActivityViewModel::class.java)
-            activityViewModel.insert(activityInfo)
+            val viewModelFactory = getViewModelFactory(this)
+            activityViewModel = ViewModelProvider(this, viewModelFactory).get(ActivityViewModel::class.java)
+            activityViewModel?.insert(activityInfo)
 
-            activityViewModel.allActivitiesLiveData.observe(this) { activityList ->
+            activityViewModel?.allActivitiesLiveData?.observe(this) { activityList ->
                 Log.d("DB_CHECK", "Number of activities in DB: ${activityList.size}")
                 activityList.forEach {
                     Log.d("DB_CHECK", "Activity: ${it.activityType}, id: ${it.id}, duration: ${it.duration}")
@@ -127,5 +130,14 @@ class ManualActivity: AppCompatActivity() {
             finish()
             // TODO: implement cancel button
         }
+    }
+
+    public fun getViewModel(): ActivityViewModel? {
+        if (activityViewModel == null) {
+            val viewModelFactory = getViewModelFactory(this)
+            activityViewModel = ViewModelProvider(this, viewModelFactory).get(ActivityViewModel::class)
+        }
+
+        return activityViewModel
     }
 }

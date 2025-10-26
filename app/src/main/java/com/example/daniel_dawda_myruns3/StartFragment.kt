@@ -23,7 +23,7 @@ class StartFragment:  Fragment(), AdapterView.OnItemSelectedListener {
     // 0 = Running, 1 = Walking, etc
     var activity_type: Int = 0
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.start_fragment, container, false)
 

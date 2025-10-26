@@ -18,6 +18,9 @@ import com.example.daniel_dawda_myruns3.database.ActivityDatabaseDao
 import com.example.daniel_dawda_myruns3.database.ActivityRepository
 import com.example.daniel_dawda_myruns3.database.ActivityViewModel
 import com.example.daniel_dawda_myruns3.database.ActivityViewModelFactory
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 // DEMO from CMPT 362 lecture
 object Util {
@@ -37,10 +40,9 @@ object Util {
     private lateinit var databaseDao: ActivityDatabaseDao
     private lateinit var repository: ActivityRepository
     private lateinit var viewModelFactory: ActivityViewModelFactory
-    private lateinit var activityViewModel: ActivityViewModel
 
-    fun initDatabase(activity: Activity): ActivityViewModelFactory {
-        database = ActivityDatabase.getInstance(activity)
+    fun getViewModelFactory(context: Context): ActivityViewModelFactory {
+        database = ActivityDatabase.getInstance(context)
         databaseDao = database.activityDatabaseDao
         repository = ActivityRepository(databaseDao)
         viewModelFactory = ActivityViewModelFactory(repository)
@@ -100,6 +102,12 @@ object Util {
         val minute = (time % 100).toInt()
 
         return Pair(hour, minute)
+    }
+
+    // adapted from ChatGPT
+    fun calendarToString(calendar: Calendar): String {
+        val format = SimpleDateFormat(" HH:mm:ss MMM dd yyyy", Locale.getDefault())
+        return format.format(calendar.time)
     }
 }
 

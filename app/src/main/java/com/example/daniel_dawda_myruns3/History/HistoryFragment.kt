@@ -1,6 +1,7 @@
 package com.example.daniel_dawda_myruns3.History
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,14 +9,12 @@ import android.widget.ListView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.daniel_dawda_myruns3.ManualActivity
 import com.example.daniel_dawda_myruns3.R
 import com.example.daniel_dawda_myruns3.Util
 import com.example.daniel_dawda_myruns3.database.Activity
-import com.example.daniel_dawda_myruns3.database.ActivityDatabase
-import com.example.daniel_dawda_myruns3.database.ActivityDatabaseDao
-import com.example.daniel_dawda_myruns3.database.ActivityRepository
 import com.example.daniel_dawda_myruns3.database.ActivityViewModel
-import com.example.daniel_dawda_myruns3.database.ActivityViewModelFactory
+import kotlin.text.replace
 
 // adapted from Actiontabs demo
 class HistoryFragment : Fragment() {
@@ -38,17 +37,14 @@ class HistoryFragment : Fragment() {
         arrayAdapter = ActivityAdapter(requireActivity(), arrayList)
         histList.adapter = arrayAdapter
 
-        val viewModelFactory = Util.initDatabase(requireActivity())
+        val viewModelFactory = ManualActivity
         activityViewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(ActivityViewModel::class.java)
 
-        activityViewModel.allActivitiesLiveData.observe(requireActivity(), Observer { it ->
-            arrayList.clear()
-            arrayList.addAll(it)
+        activityViewModel.allActivitiesLiveData.observe(viewLifecycleOwner) { activities ->
+            Log.d("HistoryFragment", "LiveData updated: ${activities.size}")
+            arrayAdapter.replace(activities)
             arrayAdapter.notifyDataSetChanged()
-        })
-
-
-
+        }
 
         return view
     }

@@ -14,15 +14,15 @@ abstract class ActivityDatabase : RoomDatabase() {
 
     companion object {
         @Volatile
-        private var INSTANCE: com.example.daniel_dawda_myruns3.database.ActivityDatabase? = null
+        private var INSTANCE: ActivityDatabase? = null
 
-        fun getInstance(context: Context): com.example.daniel_dawda_myruns3.database.ActivityDatabase {
+        fun getInstance(context: Context): ActivityDatabase {
             synchronized(this) {
                 var instance = INSTANCE
                 if (instance == null) {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
-                        com.example.daniel_dawda_myruns3.database.ActivityDatabase::class.java,
+                        ActivityDatabase::class.java,
                         "activity_table"
                     ).build()
                     INSTANCE = instance

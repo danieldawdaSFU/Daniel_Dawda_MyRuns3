@@ -14,22 +14,9 @@ class ActivityViewModel(private val repository: ActivityRepository) : ViewModel(
 
     val allActivitiesLiveData: LiveData<List<Activity>> = repository.allActivities.asLiveData()
 
+
     fun insert(Activity: Activity) {
-        repository.insert(Activity)
-    }
-
-    fun deleteFirst(){
-        val ActivityList = allActivitiesLiveData.value
-        if (ActivityList != null && ActivityList.size > 0){
-            val id = ActivityList[0].id
-            repository.delete(id)
-        }
-    }
-
-    fun deleteAll(){
-        val ActivityList = allActivitiesLiveData.value
-        if (ActivityList != null && ActivityList.size > 0)
-            repository.deleteAll()
+        viewModelScope.launch { repository.insert(Activity) }
     }
 }
 
