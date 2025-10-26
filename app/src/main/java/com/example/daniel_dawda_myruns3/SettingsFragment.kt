@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
-import android.widget.RadioButton
 import androidx.fragment.app.Fragment
 
 // adapted from Actiontabs demo

@@ -12,6 +12,12 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import com.example.daniel_dawda_myruns3.database.ActivityDatabase
+import com.example.daniel_dawda_myruns3.database.ActivityDatabaseDao
+import com.example.daniel_dawda_myruns3.database.ActivityRepository
+import com.example.daniel_dawda_myruns3.database.ActivityViewModel
+import com.example.daniel_dawda_myruns3.database.ActivityViewModelFactory
 
 // DEMO from CMPT 362 lecture
 object Util {
@@ -26,6 +32,20 @@ object Util {
     val commKey = "comments"
     val dateKey = "date"
     val timeKey = "time"
+
+    private lateinit var database: ActivityDatabase
+    private lateinit var databaseDao: ActivityDatabaseDao
+    private lateinit var repository: ActivityRepository
+    private lateinit var viewModelFactory: ActivityViewModelFactory
+    private lateinit var activityViewModel: ActivityViewModel
+
+    fun initDatabase(activity: Activity): ActivityViewModelFactory {
+        database = ActivityDatabase.getInstance(activity)
+        databaseDao = database.activityDatabaseDao
+        repository = ActivityRepository(databaseDao)
+        viewModelFactory = ActivityViewModelFactory(repository)
+        return viewModelFactory
+    }
 
     fun checkPermissions(activity: Activity?) {
         if (Build.VERSION.SDK_INT < 23) return

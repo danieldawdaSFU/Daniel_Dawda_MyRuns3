@@ -1,11 +1,14 @@
 package com.example.daniel_dawda_myruns3
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.daniel_dawda_myruns3.database.Activity
+import com.example.daniel_dawda_myruns3.database.ActivityViewModel
 import kotlinx.serialization.builtins.ArraySerializer
 import java.util.Calendar
 
@@ -98,7 +101,21 @@ class ManualActivity: AppCompatActivity() {
             activityInfo.heartRate = Util.getDouble(Util.hrKey, prefs)
             activityInfo.comment = prefs.getString(Util.commKey, "").toString()
             activityInfo.locationList = ArrayList()
+
+            // actually save into database
+            val viewModelFactory = Util.initDatabase(this)
+            val activityViewModel = ViewModelProvider(this, viewModelFactory).get(ActivityViewModel::class.java)
+            activityViewModel.insert(activityInfo)
+
+            activityViewModel.allActivitiesLiveData.observe(this) { activityList ->
+                Log.d("DB_CHECK", "Number of activities in DB: ${activityList.size}")
+                activityList.forEach {
+                    Log.d("DB_CHECK", "Activity: ${it.activityType}, id: ${it.id}, duration: ${it.duration}")
+                }
+            }
+
             Toast.makeText(this, "Activity Saved", Toast.LENGTH_LONG).show()
+            prefs.edit().clear().apply()
             finish()
         }
 

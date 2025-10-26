@@ -61,7 +61,6 @@ class ProfileActivity : AppCompatActivity(), ProfileDialogs.PhotoPickerCallback 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_profile)
 
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
