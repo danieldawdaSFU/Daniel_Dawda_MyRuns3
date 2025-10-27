@@ -105,16 +105,13 @@ class ManualActivity: AppCompatActivity() {
             activityInfo.locationList = ArrayList()
 
             // actually save into database
-            val viewModelFactory = getViewModelFactory(this)
-            activityViewModel = ViewModelProvider(this, viewModelFactory).get(ActivityViewModel::class.java)
-            activityViewModel?.insert(activityInfo)
-
-            activityViewModel?.allActivitiesLiveData?.observe(this) { activityList ->
-                Log.d("DB_CHECK", "Number of activities in DB: ${activityList.size}")
-                activityList.forEach {
-                    Log.d("DB_CHECK", "Activity: ${it.activityType}, id: ${it.id}, duration: ${it.duration}")
-                }
+            val saveActivityThread = Thread() {
+                val viewModelFactory = getViewModelFactory(this)
+                activityViewModel = ViewModelProvider(this, viewModelFactory).get(ActivityViewModel::class.java)
+                activityViewModel?.insert(activityInfo)
             }
+            saveActivityThread.start()
+
 
             Toast.makeText(this, "Activity Saved", Toast.LENGTH_LONG).show()
             prefs.edit().clear().apply()
@@ -127,16 +124,6 @@ class ManualActivity: AppCompatActivity() {
             val prefs = getSharedPreferences(Util.manualPreferences, MODE_PRIVATE)
             prefs.edit().clear().apply()
             finish()
-            // TODO: implement cancel button
         }
-    }
-
-    public fun getViewModel(): ActivityViewModel? {
-        if (activityViewModel == null) {
-            val viewModelFactory = getViewModelFactory(this)
-            activityViewModel = ViewModelProvider(this, viewModelFactory).get(ActivityViewModel::class)
-        }
-
-        return activityViewModel
     }
 }

@@ -18,7 +18,7 @@ class ActivityViewModel(private val repository: ActivityRepository) : ViewModel(
         repository.delete(id)
     }
 
-    suspend fun getActivity(id: Long): ActivityItem? {
+    fun getActivity(id: Long): ActivityItem? {
         return repository.getActivity(id)
     }
 }

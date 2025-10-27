@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.daniel_dawda_myruns3.R
 import com.example.daniel_dawda_myruns3.Util
 import com.example.daniel_dawda_myruns3.Util.getViewModelFactory
+import com.example.daniel_dawda_myruns3.database.ActivityItem
 import com.example.daniel_dawda_myruns3.database.ActivityViewModel
 import kotlinx.coroutines.launch
 
@@ -48,51 +49,62 @@ class DisplayEntryActivity: AppCompatActivity() {
         val activityViewModel =
             ViewModelProvider(this, viewModelFactory).get(ActivityViewModel::class.java)
 
+        var activity : ActivityItem? = null
+
         // set the data in the views
-        // lifescycleScope stuff adapted from ChatGPT
-        lifecycleScope.launch {
+        val readDataThread = Thread() {
             val activity = activityViewModel.getActivity(itemId)
-            if (activity != null) {
-                inputType.text = "${Util.inputMap[activity.inputType]} Input"
-                activityType.text = Util.activityMap[activity.activityType]
-                datetime.text = Util.calendarToString(activity.dateTime)
-
-                // duration conversion
-                val (minutes, seconds) = Util.toMinutesAndSeconds(activity.duration)
-
-                duration.text = "${minutes}mins ${seconds}secs"
-
-                // distance conversion
-                // retrieve unit preference
-                var unitChecked: Int
-                val settingsPreferences = getSharedPreferences(Util.settingsPrefKey, MODE_PRIVATE)
-                unitChecked = settingsPreferences.getInt(Util.unitKey, 0)
-
-                if (unitChecked == 0) {
-                    val rounded = String.format("%.2f", activity.distance)
-                    distance.text = "${rounded} km"
+            runOnUiThread {
+                if (activity == null) {
+                    Toast.makeText(this@DisplayEntryActivity, "Invalid item ID", Toast.LENGTH_SHORT).show()
+                    finish()
                 } else {
-                    val miles = Util.kilometersToMiles(activity.distance)
-                    val rounded = String.format("%.2f", miles)
-                    distance.text = "${rounded} miles"
+                    inputType.text = "${Util.inputMap[activity.inputType]} Input"
+                    activityType.text = Util.activityMap[activity.activityType]
+                    datetime.text = Util.calendarToString(activity.dateTime)
+
+                    // duration conversion
+                    val (minutes, seconds) = Util.toMinutesAndSeconds(activity.duration)
+
+                    duration.text = "${minutes}mins ${seconds}secs"
+
+                    // distance conversion
+                    // retrieve unit preference
+                    var unitChecked: Int
+                    val settingsPreferences = getSharedPreferences(Util.settingsPrefKey, MODE_PRIVATE)
+                    unitChecked = settingsPreferences.getInt(Util.unitKey, 0)
+
+                    if (unitChecked == 0) {
+                        val rounded = String.format("%.2f", activity.distance)
+                        distance.text = "${rounded} km"
+                    } else {
+                        val miles = Util.kilometersToMiles(activity.distance)
+                        val rounded = String.format("%.2f", miles)
+                        distance.text = "${rounded} miles"
+                    }
+
+                    calories.text = "${activity.calorie} cals"
+                    heartRate.text = "${activity.heartRate} bpm"
                 }
-
-                calories.text = "${activity.calorie} cals"
-                heartRate.text = "${activity.heartRate} bpm"
-
-            } else {
-                Toast.makeText(this@DisplayEntryActivity, "Activity not found", Toast.LENGTH_SHORT).show()
-                finish()
             }
+        }
+        readDataThread.start()
 
-            // delete selected item
-            delete.setOnClickListener() {
+
+        // delete selected item
+        delete.setOnClickListener() {
+            val deleteDataThread = Thread() {
                 activityViewModel.delete(itemId)
-                Toast.makeText(this@DisplayEntryActivity, "Activity ${itemId} Deleted", Toast.LENGTH_SHORT).show()
-                finish()
+                runOnUiThread {
+                    Toast.makeText(
+                        this@DisplayEntryActivity,
+                        "Activity ${itemId} Deleted",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                }
             }
-
-
+            deleteDataThread.start()
         }
     }
 }
