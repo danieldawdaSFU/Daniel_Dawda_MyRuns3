@@ -1,5 +1,6 @@
 package com.example.daniel_dawda_myruns3.History
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -14,12 +15,13 @@ import com.example.daniel_dawda_myruns3.Util.getViewModelFactory
 import com.example.daniel_dawda_myruns3.database.ActivityViewModel
 import kotlinx.coroutines.launch
 
-class HistoryItemActivity: AppCompatActivity() {
+class DisplayEntryActivity: AppCompatActivity() {
 
 
+    @SuppressLint("SetTextI18n", "DefaultLocale")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_history_item)
+        setContentView(R.layout.activity_display_activity)
 
 
         val itemId = intent.getLongExtra("itemId", -1L)
@@ -67,7 +69,8 @@ class HistoryItemActivity: AppCompatActivity() {
                 unitChecked = settingsPreferences.getInt(Util.unitKey, 0)
 
                 if (unitChecked == 0) {
-                    distance.text = "${activity.distance} km"
+                    val rounded = String.format("%.2f", activity.distance)
+                    distance.text = "${rounded} km"
                 } else {
                     val miles = Util.kilometersToMiles(activity.distance)
                     val rounded = String.format("%.2f", miles)
@@ -78,14 +81,14 @@ class HistoryItemActivity: AppCompatActivity() {
                 heartRate.text = "${activity.heartRate} bpm"
 
             } else {
-                Toast.makeText(this@HistoryItemActivity, "Activity not found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@DisplayEntryActivity, "Activity not found", Toast.LENGTH_SHORT).show()
                 finish()
             }
 
             // delete selected item
             delete.setOnClickListener() {
                 activityViewModel.delete(itemId)
-                Toast.makeText(this@HistoryItemActivity, "Activity ${itemId} Deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@DisplayEntryActivity, "Activity ${itemId} Deleted", Toast.LENGTH_SHORT).show()
                 finish()
             }
 

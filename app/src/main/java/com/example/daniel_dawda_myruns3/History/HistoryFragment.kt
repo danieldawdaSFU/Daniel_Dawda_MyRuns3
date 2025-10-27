@@ -6,14 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.daniel_dawda_myruns3.R
 import com.example.daniel_dawda_myruns3.Util.getViewModelFactory
-import com.example.daniel_dawda_myruns3.database.ActivityItem
 import com.example.daniel_dawda_myruns3.database.ActivityViewModel
 import androidx.fragment.app.activityViewModels
 
@@ -42,7 +40,7 @@ class HistoryFragment : Fragment() {
         adapter = ActivityAdapter(requireContext(), activityViewModel.allActivitiesLiveData.value ?: emptyList()
         ) { itemId ->
             Log.d("HistoryFragment", "Item clicked: $itemId")
-            val intent = Intent(requireContext(), HistoryItemActivity::class.java)
+            val intent = Intent(requireContext(), DisplayEntryActivity::class.java)
             intent.putExtra("itemId", itemId)
             startActivity(intent)
         }

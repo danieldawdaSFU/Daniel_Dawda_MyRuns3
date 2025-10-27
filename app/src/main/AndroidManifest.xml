@@ -27,7 +27,7 @@
         <activity android:name=".ManualActivity" />
         <activity android:name=".GPSActivity" />
         <activity android:name=".AutomaticActivity" />
-        <activity android:name=".History.HistoryItemActivity" />
+        <activity android:name=".History.DisplayEntryActivity" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.daniel.myruns2camera"
