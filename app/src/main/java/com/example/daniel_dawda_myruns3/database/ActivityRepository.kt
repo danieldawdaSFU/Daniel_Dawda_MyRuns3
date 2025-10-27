@@ -22,9 +22,8 @@ class ActivityRepository(private val activityDatabaseDao: ActivityDatabaseDao) {
         }
     }
 
-    fun deleteAll(){
-        CoroutineScope(IO).launch {
-            activityDatabaseDao.deleteAll()
-        }
+    suspend fun getActivity(id: Long): ActivityItem? {
+            return activityDatabaseDao.getActivity(id)
     }
+
 }

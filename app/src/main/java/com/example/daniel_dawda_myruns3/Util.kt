@@ -25,6 +25,9 @@ import java.util.Locale
 // DEMO from CMPT 362 lecture
 object Util {
 
+    val settingsPrefKey = "settingsKey"
+    val unitKey = "unit"
+
     val manualPreferences = "manualPrefs"
     val inputKey = "input"
     val actKey = "activity"
@@ -40,6 +43,22 @@ object Util {
     private lateinit var databaseDao: ActivityDatabaseDao
     private lateinit var repository: ActivityRepository
     private lateinit var viewModelFactory: ActivityViewModelFactory
+
+    val inputMap: Map<Int, String> = mapOf(
+        0 to "GPS",
+        1 to "Manual",
+        2 to "Automatic"
+    )
+
+    val activityMap: Map<Int, String> = mapOf(
+        0 to "Run",
+        1 to "Walk",
+        2 to "Cycle",
+        3 to "Hike",
+        4 to "Swim",
+        5 to "Row",
+        6 to "Other"
+    )
 
     fun getViewModelFactory(context: Context): ActivityViewModelFactory {
         database = ActivityDatabase.getInstance(context)
@@ -108,6 +127,22 @@ object Util {
     fun calendarToString(calendar: Calendar): String {
         val format = SimpleDateFormat(" HH:mm:ss MMM dd yyyy", Locale.getDefault())
         return format.format(calendar.time)
+    }
+
+    // turn saved duration into minutes and seconds
+    fun toMinutesAndSeconds(duration: Double): Pair<Int, Int> {
+        val totalSeconds = (duration * 60).toInt()
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        return Pair(minutes, seconds)
+    }
+
+    fun milesToKilometers(miles: Double): Double {
+        return miles * 1.60934
+    }
+
+    fun kilometersToMiles(kilometers: Double): Double {
+        return kilometers / 1.60934
     }
 }
 

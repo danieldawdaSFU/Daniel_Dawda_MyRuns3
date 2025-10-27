@@ -1,6 +1,8 @@
 package com.example.daniel_dawda_myruns3.History
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,27 +15,23 @@ import com.example.daniel_dawda_myruns3.database.ActivityItem
 
 // adapted from my stress meter app and RoomDatabase demo
 // RecyclerView adapted from ChatGPT assistance
-class ActivityAdapter(private val context: Context, private var list: List<ActivityItem>): RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder>(){
+class ActivityAdapter(private val context: Context, private var list: List<ActivityItem>, private val onItemClick: (Long) -> Unit): RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder>(){
     inner class ActivityViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         // find views in list
         val topView = itemView.findViewById<TextView>(R.id.top_text)
         val bottomView = itemView.findViewById<TextView>(R.id.bottom_text)
+
+        // assistance from ChatGPT
+        init {
+            itemView.setOnClickListener {
+                val position = getBindingAdapterPosition()
+                if (position != RecyclerView.NO_POSITION) {
+                    val itemId = list[position].id
+                    onItemClick(itemId)
+                }
+            }
+        }
     }
-
-    val inputMap: Map<Int, String> = mapOf(
-        0 to "GPS",
-        1 to "Manual",
-        2 to "Automatic"
-    )
-
-    val activityMap: Map<Int, String> = mapOf(
-        0 to "Run",
-        1 to "Walk",
-        2 to "Cycle",
-        3 to "Swim",
-        4 to "Row",
-        5 to "Other"
-    )
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -52,15 +50,31 @@ class ActivityAdapter(private val context: Context, private var list: List<Activ
         val inputType = list.get(position).inputType
         val activityType = list.get(position).activityType
         val dateTime = list.get(position).dateTime
-        val distance = list.get(position).distance
+        var distance = list.get(position).distance
         val duration = list.get(position).duration
 
         // construct top and bottom text
-        val top_text = "${inputMap[inputType]} Entry: ${activityMap[activityType]}, ${Util.calendarToString(dateTime)}"
+        val top_text = "${Util.inputMap[inputType]} Entry: ${Util.activityMap[activityType]}, ${Util.calendarToString(dateTime)}"
 
-        val minutes = duration.toInt() / 60
-        val seconds = duration.toInt() % 60
-        val bottom_text = "${distance} Miles, ${minutes}mins ${seconds}secs"
+        // time conversion
+        val (minutes, seconds) = Util.toMinutesAndSeconds(duration)
+
+        // retrieve unit preference
+        var unitChecked: Int
+        val settingsPreferences = context.getSharedPreferences(Util.settingsPrefKey, MODE_PRIVATE)
+        unitChecked = settingsPreferences.getInt(Util.unitKey, 0)
+
+
+        // distance conversion
+        var bottom_text = ""
+        if (unitChecked == 0) {
+            val rounded = String.format("%.2f", distance)
+            bottom_text = "${rounded} Km, ${minutes}mins ${seconds}secs"
+        } else {
+            distance = Util.kilometersToMiles(distance)
+            val rounded = String.format("%.2f", distance)
+            bottom_text = "${rounded} Miles, ${minutes}mins ${seconds}secs"
+        }
 
         // set top and bottom texts
         holder.topView.text = top_text
@@ -78,6 +92,11 @@ class ActivityAdapter(private val context: Context, private var list: List<Activ
 
     fun replace(newList: List<ActivityItem>) {
         list = newList
+        refresh()
+    }
+
+    fun refresh() {
         notifyDataSetChanged()
+        Log.d("YOPME", "refresh")
     }
 }

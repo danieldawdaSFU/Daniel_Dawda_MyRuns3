@@ -9,6 +9,9 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
+import com.example.daniel_dawda_myruns3.History.HistoryViewModel
 
 // adapted from dialog demo
 class SettingsDialogs : DialogFragment(), DialogInterface.OnClickListener{
@@ -85,6 +88,9 @@ class SettingsDialogs : DialogFragment(), DialogInterface.OnClickListener{
 
         editor.putInt(unitKey, unitChecked)
         editor.apply()
+
+        val historyViewModel: HistoryViewModel by activityViewModels()
+        historyViewModel.signalUnitChange()
     }
 
     fun loadUnit() {

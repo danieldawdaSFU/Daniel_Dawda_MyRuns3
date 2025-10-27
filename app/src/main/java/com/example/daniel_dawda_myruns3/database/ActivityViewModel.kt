@@ -10,9 +10,16 @@ class ActivityViewModel(private val repository: ActivityRepository) : ViewModel(
 
     val allActivitiesLiveData: LiveData<List<ActivityItem>> = repository.allActivities.asLiveData()
 
-
     fun insert(Activity: ActivityItem) {
         repository.insert(Activity)
+    }
+
+    fun delete(id: Long) {
+        repository.delete(id)
+    }
+
+    suspend fun getActivity(id: Long): ActivityItem? {
+        return repository.getActivity(id)
     }
 }
 

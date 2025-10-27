@@ -15,9 +15,9 @@ interface ActivityDatabaseDao {
     @Query("SELECT * FROM activity_table")
     fun getAllActivities(): Flow<List<ActivityItem>>
 
-    @Query("DELETE FROM activity_table")
-    suspend fun deleteAll()
-
     @Query("DELETE FROM activity_table WHERE id = :key")
     suspend fun deleteActivity(key: Long)
+
+    @Query("SELECT * FROM activity_table WHERE id = :key LIMIT 1")
+    suspend fun getActivity(key: Long): ActivityItem?
 }

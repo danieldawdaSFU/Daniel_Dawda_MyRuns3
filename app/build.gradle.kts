@@ -47,6 +47,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("androidx.fragment:fragment-ktx:1.6.0")
 
     // from RoomDatabase Lecture
     // Room components
@@ -55,4 +56,5 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+
 }

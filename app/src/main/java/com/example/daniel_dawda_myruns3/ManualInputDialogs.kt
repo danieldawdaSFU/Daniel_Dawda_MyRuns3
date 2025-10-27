@@ -49,7 +49,7 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
         when (dialogId) {
             DUR_DIALOG -> {
 
-                input.inputType = InputType.TYPE_CLASS_NUMBER
+                input.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
 
                 // retrieve duration preference
                 val dur: Double = Util.getDouble(Util.durKey, sharedPreferences)
@@ -69,12 +69,10 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
             DIST_DIALOG -> {
 
                 // retrieve unit preference
-                val settingsPrefKey = "settingsKey"
-                val unitKey = "unit"
                 var unitChecked: Int
                 val settingsPreferences =
-                    requireContext().getSharedPreferences(settingsPrefKey, MODE_PRIVATE)
-                unitChecked = settingsPreferences.getInt(unitKey, 0)
+                    requireContext().getSharedPreferences(Util.settingsPrefKey, MODE_PRIVATE)
+                unitChecked = settingsPreferences.getInt(Util.unitKey, 0)
 
                 // retrieve distance preference
                 val dist: Double = Util.getDouble(Util.distKey, sharedPreferences)
@@ -88,7 +86,7 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
                     input.hint = "distance in miles"
                 }
 
-                input.inputType = InputType.TYPE_CLASS_NUMBER
+                input.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
 
                 builder.setView(view)
                 builder.setTitle("Distance")
@@ -106,7 +104,7 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
                     input.setText(cals.toString())
                 }
                 input.hint = "calories burned"
-                input.inputType = InputType.TYPE_CLASS_NUMBER
+                input.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
 
                 builder.setView(view)
                 builder.setTitle("Calories")
@@ -123,7 +121,7 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
                     input.setText(hr.toString())
                 }
                 input.hint = "average heart rate"
-                input.inputType = InputType.TYPE_CLASS_NUMBER
+                input.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
 
                 builder.setView(view)
                 builder.setTitle("Heart Rate")
@@ -163,7 +161,19 @@ class ManualInputsDialogs: DialogFragment(), DialogInterface.OnClickListener {
             }
             DIST_DIALOG -> {
                 if (inputStr != "") {
-                    Util.putDouble(Util.distKey, input.text.toString().toDouble(), sharedPreferences)
+                    // retrieve unit preference
+                    var unitChecked: Int
+                    val settingsPreferences =
+                        requireContext().getSharedPreferences(Util.settingsPrefKey, MODE_PRIVATE)
+                    unitChecked = settingsPreferences.getInt(Util.unitKey, 0)
+
+                    // store distance as kilometers always
+                    if (unitChecked == 0) {
+                        Util.putDouble(Util.distKey, input.text.toString().toDouble(), sharedPreferences)
+                    } else {
+                        val kilometers = Util.milesToKilometers(input.text.toString().toDouble())
+                        Util.putDouble(Util.distKey, kilometers, sharedPreferences)
+                    }
                 }
             }
             CAL_DIALOG -> {
