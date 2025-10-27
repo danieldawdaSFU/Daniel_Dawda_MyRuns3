@@ -28,8 +28,8 @@
     <string name="take_photo">Change</string>
     <string name="imperial">Imperial (eg. miles)</string>
     <string name="your_comment_goes_here">Your comment goes here...</string>
-    <string name="input_type">Input Type:</string>
-    <string name="activity_type">Activity Type:</string>
+    <string name="input_type">Input Type</string>
+    <string name="activity_type">Activity Type</string>
     <string name="start">Start</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
@@ -40,6 +40,9 @@
     <string name="gps_activity">GPS Activity</string>
     <string name="automatic">Automatic</string>
     <string name="history_fragment">History Fragment</string>
+    <string name="date_and_time">Date and Time</string>
+    <string name="tmp">tmp</string>
+    <string name="delete">Delete</string>
     <string-array name="input_options">
         <item>GPS</item>
         <item>Manual Input</item>
