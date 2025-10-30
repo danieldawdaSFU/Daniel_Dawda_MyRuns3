@@ -12,9 +12,9 @@ class ActivityRepository(private val activityDatabaseDao: ActivityDatabaseDao) {
 
     val allActivities: Flow<List<ActivityItem>> = activityDatabaseDao.getAllActivities()
 
-    fun insert(comment: ActivityItem){
+    fun insert(activity: ActivityItem){
         CoroutineScope(IO).launch {
-            activityDatabaseDao.insertActivity(comment)
+            activityDatabaseDao.insertActivity(activity)
         }
     }
 
